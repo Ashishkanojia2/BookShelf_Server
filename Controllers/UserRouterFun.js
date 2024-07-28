@@ -22,7 +22,7 @@ export const register = async (req, res) => {
         .json({ success: false, message: "user is already exists" });
     }
 
-    const otp = Math.floor(Math.random() * 1000000).padStart(6, "0");
+    const otp = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
     const otp_expire = new Date(Date.now() + 5 * 60 * 10000);
 
     const data = await usermodule.create({
