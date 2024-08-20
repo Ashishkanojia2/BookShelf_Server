@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 export const sendToken = (res, statusCode, userdata, message) => {
   const user = {
     _id: userdata._id,
-    name: userdata.b_name,
+    name: userdata.name,
     email: userdata.email,
     phone: userdata.phone,
     address: userdata.address,
