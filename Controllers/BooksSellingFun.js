@@ -22,7 +22,8 @@ export const register = async (req, res) => {
       b_author,
       b_categories,
       b_edition,
-      b_seller_id,
+      b_desc,
+      // b_seller_id,
     } = req.body;
 
     const bookdata = await BookModel.create({
@@ -32,6 +33,7 @@ export const register = async (req, res) => {
       b_author,
       b_categories,
       b_edition,
+      b_desc,
       b_seller_id: user._id,
     });
 

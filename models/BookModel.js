@@ -5,6 +5,10 @@ const bookSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+  b_desc: {
+    type: String,
+    require: true,
+  },
   b_MRP: {
     type: Number,
     require: true,
