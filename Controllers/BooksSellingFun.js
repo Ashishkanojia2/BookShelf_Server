@@ -1,4 +1,5 @@
-import { BookModel } from "../models/BookModel.js";
+// import { BookModel } from "../models/BookModel.js";
+import { bookmodule } from "../models/BookModel.js";
 import { usermodule } from "../models/userModel.js";
 import { responseSender } from "../ResponseSender/responseSender.js";
 
@@ -57,7 +58,7 @@ export const register = async (req, res) => {
 };
 export const getallbooks = async (req, res) => {
   try {
-    const allData = await usermodule.find();
+    const allData = await bookmodule.find();
     console.log("can we Recived all books data ", user);
     if (!allData) {
       res.status(401).json({
