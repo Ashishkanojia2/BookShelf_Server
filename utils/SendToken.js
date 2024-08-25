@@ -9,7 +9,8 @@ export const sendToken = (res, statusCode, userdata, message) => {
     address: userdata.address,
     verified: userdata.verified,
     otp: userdata.otp,
-    createAt : userdata.createAt
+    createAt : userdata.createAt,
+    sellingBookid :userdata.sellingbooks
   };
 
   const token = jwt.sign({ _id: userdata._id }, process.env.JWT_SECRET_KEY);
