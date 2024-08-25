@@ -18,6 +18,7 @@ export const register = async (req, res) => {
     const {
       b_name,
       b_MRP,
+      b_desc,
       b_sellingprice,
       b_author,
       b_categories,
@@ -28,6 +29,7 @@ export const register = async (req, res) => {
     const bookdata = await BookModel.create({
       b_name,
       b_MRP,
+      b_desc,
       b_sellingprice,
       b_author,
       b_categories,
