@@ -21,7 +21,7 @@ export const register = async (req, res) => {
       b_desc,
       b_sellingprice,
       b_author,
-      b_categories,
+      b_categorie,
       b_edition,
       b_seller_id,
     } = req.body;
@@ -32,7 +32,7 @@ export const register = async (req, res) => {
       b_desc,
       b_sellingprice,
       b_author,
-      b_categories,
+      b_categorie,
       b_edition,
       b_seller_id: user._id,
     });
