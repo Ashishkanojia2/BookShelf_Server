@@ -39,6 +39,7 @@ const userSchema = mongoose.Schema({
   resetPasswordOtpExpire: Date,
 
   sellingbooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "books" }],
+  feedBack: [{ type: mongoose.Schema.Types.ObjectId, ref: "feedback" }],
 });
 
 userSchema.pre("save", async function (next) {
@@ -53,10 +54,6 @@ userSchema.pre("save", async function (next) {
     console.log(error);
   }
 });
-
-// userSchema.methods.comparePassword = async function (password) {
-//   return await bcrypt.compare(password, this.password);
-// };
 
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (password) {

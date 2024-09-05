@@ -1,6 +1,7 @@
 import express from "express";
 import User from "./Routers/UserRouters.js";
 import bookRouter from "./Routers/BookRouters.js";
+import feedbackRouter from "./Routers/FeedbackRouters.js";
 export const app = express();
 import cookieParser from "cookie-parser";
 
@@ -11,3 +12,4 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", User);
 app.use("/api/v1/book", bookRouter);
+app.use("/api/v1/feedback", feedbackRouter);
