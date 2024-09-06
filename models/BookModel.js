@@ -33,6 +33,12 @@ const bookSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
+  images: [
+    {
+      public_id: { type: String, required: true },
+      url: { type: String, required: true },
+    },
+  ],
 });
 
 export const BookModel = mongoose.model("books", bookSchema);

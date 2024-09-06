@@ -1,11 +1,15 @@
 import { BookModel } from "../models/BookModel.js";
 import { usermodule } from "../models/userModel.js";
+import { responseErrorSender } from "../ResponseSender/responseSender.js";
+import cloudinary from "cloudinary";
+import fs from "fs";
 
 export const book_Home = (req, res) => {
   res.send("chl rha hai bhai book router");
 };
 export const register = async (req, res) => {
   try {
+    const productImages = [];
     const user = await usermodule.findById(req.user._id);
     console.log("here is a user", user);
     if (!user) {
@@ -13,6 +17,11 @@ export const register = async (req, res) => {
         sucess: false,
         message: "user not exists while register books",
       });
+    }
+    const images = req.files?.images;
+
+    if (!images || images.length === 0) {
+      return responseSender(res, 400, false, "No images provided.");
     }
 
     const {
@@ -25,6 +34,35 @@ export const register = async (req, res) => {
       b_edition,
       b_seller_id,
     } = req.body;
+    if (Array.isArray(images)) {
+      // If the request contains multiple files
+      for (const image of images) {
+        const tempFilePath = image.tempFilePath;
+        const uploadResult = await cloudinary.v2.uploader.upload(tempFilePath, {
+          folder: "Product_Images_ashishDev",
+        });
+        productImages.push({
+          public_id: uploadResult.public_id,
+          url: uploadResult.secure_url,
+        });
+
+        // Optionally remove the temporary file after uploading
+        fs.rmSync(tempFilePath, { recursive: true, force: true });
+      }
+    } else {
+      // If only one file is uploaded
+      const tempFilePath = images.tempFilePath;
+      const uploadResult = await cloudinary.v2.uploader.upload(tempFilePath, {
+        folder: "Product_Images_ashishDev",
+      });
+      productImages.push({
+        public_id: uploadResult.public_id,
+        url: uploadResult.secure_url,
+      });
+
+      // Remove the temporary file after uploading
+      fs.rmSync(tempFilePath, { recursive: true, force: true });
+    }
 
     const bookdata = await BookModel.create({
       b_name,
@@ -35,13 +73,21 @@ export const register = async (req, res) => {
       b_categorie,
       b_edition,
       b_seller_id: user._id,
+      images: productImages,
     });
 
     let userdata = await usermodule.findOne({
       _id: user._id,
     });
     userdata.sellingbooks.push(bookdata._id);
+    // userdata.images.push(productImages);
     userdata.save();
+
+    // Optionally remove the temp folder if empty
+    const tempFolder = "./tmp"; // Change this to your temp folder path
+    if (fs.existsSync(tempFolder) && fs.readdirSync(tempFolder).length === 0) {
+      fs.rmSync(tempFolder, { recursive: true, force: true });
+    }
 
     res
       .status(200)
@@ -72,6 +118,15 @@ export const getallData = async (req, res) => {
       success: false,
       message: "Something is error while getting book",
     });
+    console.log(" error getting book", error);
+  }
+};
+export const bookphoto = async (req, res) => {
+  try {
+    const images = req.files?.images.tempFilePath;
+    console.log("book ki image me kya mil raha hai ", images);
+  } catch (error) {
+    responseErrorSender(res, 401, false, error);
     console.log(" error getting book", error);
   }
 };
