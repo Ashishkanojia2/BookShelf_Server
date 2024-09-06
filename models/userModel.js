@@ -25,9 +25,21 @@ const userSchema = mongoose.Schema({
     require: true,
     type: String,
   },
+  gender: {
+    require: true,
+    type: String,
+  },
+  occupation: {
+    require: true,
+    type: String,
+  },
   createAt: {
     type: Date,
     default: Date.now,
+  },
+  avatar: {
+    public_id: String,
+    url: String,
   },
   verified: {
     type: Boolean,

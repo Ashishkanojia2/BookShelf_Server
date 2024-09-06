@@ -6,6 +6,9 @@ import {
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendMail } from "../utils/sendMail.js";
 import { sendToken } from "../utils/SendToken.js";
+import fs from "fs";
+
+import cloudinary from "cloudinary";
 
 export const home_route = async (req, res) => {
   res.send("This is from Controller userRouter funciton ");
@@ -13,7 +16,7 @@ export const home_route = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, phone, address } = req.body;
+    const { name, email, password, phone, address, avatar } = req.body;
 
     let user = await usermodule.findOne({ email });
     if (user) {
@@ -22,7 +25,9 @@ export const register = async (req, res) => {
         .json({ success: false, message: "user is already exists" });
     }
 
-    const otp = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+    const otp = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, "0");
     const otp_expire = new Date(Date.now() + 5 * 60 * 10000);
 
     const data = await usermodule.create({
@@ -33,6 +38,7 @@ export const register = async (req, res) => {
       address,
       otp,
       otp_expire,
+      avatar,
     });
     const sendmailMessage = ` BOOK SELLING APPLICATION selling your old book in our application for best price
     Your Verification OTP is:  ${otp}  `;
@@ -242,8 +248,61 @@ export const updatePassword = async (req, res) => {
 
     responseSender(res, 200, true, "Password update Successfully ");
   } catch (error) {
-    responseErrorSender(res, 401, false, `user not found ${error.message}`);  
+    responseErrorSender(res, 401, false, `user not found ${error.message}`);
+  }
+};
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, gender, occupation, phone, address } = req.body;
+    const avatar = req.files.avatar.tempFilePath;
 
-    
+    console.log("avatar miila", avatar);
+
+    const user = await usermodule.findById(req.user._id);
+    if (!user) {
+      return responseSender(res, 404, false, "User not found");
+    }
+    // console.log("before update profile", user);
+
+    if (name) user.name = name;
+    if (gender) user.gender = gender;
+    if (occupation) user.occupation = occupation;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+
+    if (avatar) {
+      try {
+        if (user.avatar?.public_id) {
+          await cloudinary.v2.uploader.destroy(user.avatar.public_id); // Delete previous image
+        }
+        const mycloud = await cloudinary.v2.uploader.upload(avatar, {
+          folder: "BookShelf_Application_ashishDev", // FOR THIS IN CLOUDNARY SERVER ONE FOLDER WILL CREATE WITH THIS SAME NAME AND ALL THE PHOTOS WILL SAVE IN THIS FOLDER
+        });
+        user.avatar = {
+          public_id: mycloud.public_id,
+          url: mycloud.secure_url,
+        };
+
+        // Ensure temp file is deleted after upload
+        fs.rmSync("./tmp", { recursive: true, force: true });
+      } catch (cloudinaryError) {
+        console.error("Cloudinary Error:", cloudinaryError);
+        return res.status(500).json({
+          success: false,
+          message: `Cloudinary Error: ${cloudinaryError.message}`,
+        });
+      }
+    }
+
+    await user.save();
+
+    responseSender(res, 200, true, `Profile update Successfully `);
+  } catch (error) {
+    responseErrorSender(
+      res,
+      401,
+      false,
+      `Error from updateprofile : ${error.message}`
+    );
   }
 };

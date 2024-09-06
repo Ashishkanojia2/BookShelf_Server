@@ -8,6 +8,7 @@ import {
   register,
   resetPassword,
   updatePassword,
+  updateProfile,
   verify,
 } from "../Controllers/UserRouterFun.js";
 import { isAuthenticated } from "../Middleware/auth.js";
@@ -27,5 +28,6 @@ router.route("/me").get(isAuthenticated, getMyProfile);
 router.route("/forgotPassword").post(forgotPassword);
 router.route("/resetPassword").put(resetPassword);
 router.route("/updatePassword").put(isAuthenticated, updatePassword);
+router.route("/updateProfile").put(isAuthenticated, updateProfile);
 
 export default router;
