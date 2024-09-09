@@ -132,72 +132,12 @@ export const bookphoto = async (req, res) => {
     console.log(" error getting book", error);
   }
 };
-// export const user_DeleteBook = async (req, res) => {
-//   const { bookid } = req.params;
-//   const userdata = await usermodule.findById(req.user._id); // Fetch user data using ID from token/session
-
-//   if (!userdata) {
-//     return responseSender(res, 401, false, "User not found");
-//   }
-
-//   console.log("User data:", userdata);
-
-//   const bookIndex = await userdata.sellingbooks.indexOf(bookid);
-//   if (bookIndex > -1) {
-//     user.sellingbooks.splice(bookIndex, 1); // Remove the book
-//     await userdata.save();
-//     return responseSender(res, 200, true, "Book deleted successfully");
-//   }
-// };
-// export const user_DeleteBook = async (req, res) => {
-//   try {
-//     const { bookid } = req.params;
-//     const userdata = await usermodule.findById(req.user._id); // Fetch user data using ID from token/session
-
-//     if (!userdata) {
-//       return responseSender(res, 401, false, "User not found");
-//     }
-
-//     console.log("User data:", userdata);
-//     const afterdeletebook = userdata.sellingbooks.filter((item) => {
-//       console.log("filter book item", item);
-//       return String(item) !== String(bookid);
-//     });
-
-//     console.log("afterdeletebook", afterdeletebook);
-
-//     // const bookIndex = userdata.sellingbooks.indexOf(bookid); // Get the index of the book in the array
-//     // console.log("bookIndex", bookIndex);
-
-//     // if (bookIndex > -1) {
-//     //   userdata.sellingbooks.splice(bookIndex, 1); // Remove the book
-//     //   await userdata.save(); // Save the updated user data
-//     //   return responseSender(res, 200, true, "Book deleted successfully");
-//     // } else {
-//     //   return responseSender(
-//     //     res,
-//     //     404,
-//     //     false,
-//     //     "Book not found in user's selling list"
-//     //   );
-//     // }
-//   } catch (error) {
-//     console.log("Error in deleting book:", error);
-//     return responseSender(
-//       res,
-//       500,
-//       false,
-//       "Server error occurred while deleting book"
-//     );
-//   }
-// };
 
 export const user_DeleteBook = async (req, res) => {
   try {
     const bookid = req.params;
     const userId = req.user._id;
 
-    // Fetch user data using ID from token/session
     const userdata = await usermodule.findById(userId);
 
     if (!userdata) {
@@ -206,27 +146,15 @@ export const user_DeleteBook = async (req, res) => {
 
     console.log("User data before deletion:", userdata);
 
-    // Convert bookid to string for comparison
     console.log("@#$", typeof bookid);
     console.log("@#$12233", bookid.bookId);
 
     const bookIdString = String(bookid.bookId);
 
-    // Filter out the bookid from the sellingbooks array
     const updatedSellingBooks = userdata.sellingbooks.filter((item) => {
       console.log("Comparing:", String(item), "with", bookIdString);
       return String(item) !== bookIdString;
     });
-
-    // Check if the book ID was found and removed
-    // if (updatedSellingBooks.length === userdata.sellingbooks.length) {
-    //   return responseSender(
-    //     res,
-    //     404,
-    //     false,
-    //     "Book not found in user's selling list"
-    //   );
-    // }
 
     const deletebookfromBookData = await BookModel.findByIdAndDelete(
       bookIdString
@@ -247,5 +175,3 @@ export const user_DeleteBook = async (req, res) => {
     );
   }
 };
-
-export const admin_DeleteBook = async (req, res) => {};
