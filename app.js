@@ -5,7 +5,7 @@ import feedbackRouter from "./Routers/FeedbackRouters.js";
 export const app = express();
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
-import cors  from cors
+import cors  from "cors"
 
 //YAHA PR USER ROUTER FILE KO IMPORT KENA HIA
 // COOKIE PARSER KO BHEE IMPORT KRNA HAI
