@@ -11,6 +11,8 @@ export const book_Home = (req, res) => {
   res.send("chl rha hai bhai book router");
 };
 export const register = async (req, res) => {
+  console.log("register route");
+
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
@@ -21,10 +23,11 @@ export const register = async (req, res) => {
         message: "user not exists while register books",
       });
     }
+    console.log("req.files", req.files);
     const images = req.files?.images;
 
     if (!images || images.length === 0) {
-      return responseSender(res, 400, false, "No images provided.");
+      return responseSender(res, 400, false, "No images provided12.");
     }
 
     const {
