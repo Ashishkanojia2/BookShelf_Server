@@ -23,12 +23,13 @@ app.use(
     useTempFiles: true, // FOR THIS TEMP FOLDER WILL CREATE AND PHOTO WILL BE STORE ON TEMPEORY BEASES
   })
 );
-app.use(
-  cors({
-    origin: "*", // Allow all origins or specify the mobile app URL
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*", // Allow all origins or specify the mobile app URL
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   })
+// );
+app.use(cors());
 app.use("/api/v1/user", User);
 app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/feedback", feedbackRouter);
