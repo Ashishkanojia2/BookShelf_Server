@@ -13,14 +13,9 @@ export const book_Home = (req, res) => {
 export const register = async (req, res) => {
   console.log("register route");
   console.log("req.files", req.files);
-  useEffect(() => {
-    effect
-    return () => {
-      cleanup
-    };
-  }, [input])(() => {
-    console.log("req.files", req.files);
-  }, []);
+  // useEffect(() => {
+  //   console.log("req.files", req.files);
+  // }, []);
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
