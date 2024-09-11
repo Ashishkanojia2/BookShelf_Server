@@ -12,7 +12,10 @@ export const book_Home = (req, res) => {
 };
 export const register = async (req, res) => {
   console.log("register route");
-
+  console.log("req.files", req.files);
+  useEffect(() => {
+    console.log("req.files", req.files);
+  }, []);
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
@@ -25,6 +28,7 @@ export const register = async (req, res) => {
     }
     console.log("req.files", req.files);
     const images = req.files?.images;
+    console.log("$$$$$$$$$$$$$44", images);
 
     if (!images || images.length === 0) {
       return responseSender(res, 400, false, "No images provided12.");
