@@ -12,6 +12,7 @@ import {
   verify,
 } from "../Controllers/UserRouterFun.js";
 import { isAuthenticated } from "../Middleware/auth.js";
+import upload from "../Middleware/multerMiddleware.js";
 const router = express();
 
 router.get("/", (req, res) => {
@@ -28,6 +29,9 @@ router.route("/me").get(isAuthenticated, getMyProfile);
 router.route("/forgotPassword").post(forgotPassword);
 router.route("/resetPassword").put(resetPassword);
 router.route("/updatePassword").put(isAuthenticated, updatePassword);
-router.route("/updateProfile").put(isAuthenticated, updateProfile);
+router
+  .route("/updateProfile")
+  .put(isAuthenticated, upload.single("avatar"), updateProfile);
+// router.route("/register").post(isAuthenticated, upload.array("images"), register);  // this route is book register route
 
 export default router;

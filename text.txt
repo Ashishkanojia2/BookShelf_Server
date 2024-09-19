@@ -1,2 +1,0 @@
-json web token and cookie 
-bcrypt

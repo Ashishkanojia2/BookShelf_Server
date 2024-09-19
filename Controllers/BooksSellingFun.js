@@ -6,32 +6,37 @@ import {
 } from "../ResponseSender/responseSender.js";
 import cloudinary from "cloudinary";
 import fs from "fs";
+import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 export const book_Home = (req, res) => {
   res.send("chl rha hai bhai book router");
 };
+
 export const register = async (req, res) => {
   console.log("register route");
   console.log("req.files", req.files);
-  // useEffect(() => {
-  //   console.log("req.files", req.files);
-  // }, []);
+  console.log("req.body", req.body);
   try {
+    console.log("register route");
+    console.log("req.files", req.files); // Ensure files are here
+
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
-    console.log("here is a user", user);
+
     if (!user) {
-      res.status(401).json({
-        sucess: false,
-        message: "user not exists while register books",
+      return res.status(401).json({
+        success: false,
+        message: "User does not exist while registering books",
       });
     }
-    console.log("req.files", req.files);
-    const images = req.files?.images;
-    console.log("$$$$$$$$$$$$$44", images);
+
+    const images = req.files; // Use req.files directly, since multer handles it
 
     if (!images || images.length === 0) {
-      return responseSender(res, 400, false, "No images provided12.");
+      return res.status(400).json({
+        success: false,
+        message: "No images provided.",
+      });
     }
 
     const {
@@ -43,34 +48,17 @@ export const register = async (req, res) => {
       b_categorie,
       b_edition,
     } = req.body;
-    if (Array.isArray(images)) {
-      // If the request contains multiple files
-      for (const image of images) {
-        const tempFilePath = image.tempFilePath;
-        const uploadResult = await cloudinary.v2.uploader.upload(tempFilePath, {
-          folder: "Product_Images_ashishDev",
-        });
-        productImages.push({
-          public_id: uploadResult.public_id,
-          url: uploadResult.secure_url,
-        });
 
-        // Optionally remove the temporary file after uploading
-        fs.rmSync(tempFilePath, { recursive: true, force: true });
-      }
-    } else {
-      // If only one file is uploaded
-      const tempFilePath = images.tempFilePath;
-      const uploadResult = await cloudinary.v2.uploader.upload(tempFilePath, {
-        folder: "Product_Images_ashishDev",
-      });
+    for (const image of images) {
+      const tempFilePath = image.path; // Use the multer-assigned path
+      const uploadResult = await uploadOnCloudinary(tempFilePath);
+
       productImages.push({
         public_id: uploadResult.public_id,
         url: uploadResult.secure_url,
       });
 
-      // Remove the temporary file after uploading
-      fs.rmSync(tempFilePath, { recursive: true, force: true });
+      fs.unlinkSync(tempFilePath); // Remove temporary local file after upload
     }
 
     const bookdata = await BookModel.create({
@@ -85,30 +73,30 @@ export const register = async (req, res) => {
       images: productImages,
     });
 
-    let userdata = await usermodule.findOne({
-      _id: user._id,
-    });
-    userdata.sellingbooks.push(bookdata._id);
-    // userdata.images.push(productImages);
-    userdata.save();
-
-    // Optionally remove the temp folder if empty
-    const tempFolder = "./tmp"; // Change this to your temp folder path
-    if (fs.existsSync(tempFolder) && fs.readdirSync(tempFolder).length === 0) {
-      fs.rmSync(tempFolder, { recursive: true, force: true });
-    }
+    user.sellingbooks.push(bookdata._id);
+    await user.save();
 
     res
       .status(200)
-      .json({ success: true, message: "book is registered ", bookdata });
+      .json({
+        success: true,
+        message: "Book registered successfully",
+        bookdata,
+      });
   } catch (error) {
-    res.status(404).json({
+    console.log("Error while registering book:", error);
+    res.status(500).json({
       success: false,
-      message: "Something is error in server while registering book",
+      message: "Server error while registering book",
     });
-    console.log("Something is error in server while registering book", error);
   }
 };
+
+//
+//
+//
+//
+//
 export const getallData = async (req, res) => {
   try {
     const allbooks = await BookModel.find();

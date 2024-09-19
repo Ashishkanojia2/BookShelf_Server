@@ -8,7 +8,7 @@ import { sendMail } from "../utils/sendMail.js";
 import { sendToken } from "../utils/SendToken.js";
 import fs from "fs";
 
-import cloudinary from "cloudinary";
+import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 export const home_route = async (req, res) => {
   res.send("This is from Controller userRouter funciton ");
@@ -254,15 +254,12 @@ export const updatePassword = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { name, gender, occupation, phone, address } = req.body;
-    const avatar = req.files.avatar.tempFilePath;
-
-    console.log("avatar miila", avatar);
+    const avatar = req.file?.path;
 
     const user = await usermodule.findById(req.user._id);
     if (!user) {
       return responseSender(res, 404, false, "User not found");
     }
-    // console.log("before update profile", user);
 
     if (name) user.name = name;
     if (gender) user.gender = gender;
@@ -273,30 +270,31 @@ export const updateProfile = async (req, res) => {
     if (avatar) {
       try {
         if (user.avatar?.public_id) {
-          await cloudinary.v2.uploader.destroy(user.avatar.public_id); // Delete previous image
+          const responseForDelete = await deleteOnCloudinary(
+            user.avatar.public_id
+          );
         }
-        const mycloud = await cloudinary.v2.uploader.upload(avatar, {
-          folder: "BookShelf_Application_ashishDev", // FOR THIS IN CLOUDNARY SERVER ONE FOLDER WILL CREATE WITH THIS SAME NAME AND ALL THE PHOTOS WILL SAVE IN THIS FOLDER
-        });
+        const mycloud = await uploadOnCloudinary(avatar);
+
         user.avatar = {
           public_id: mycloud.public_id,
           url: mycloud.secure_url,
         };
-
-        // Ensure temp file is deleted after upload
-        fs.rmSync("./tmp", { recursive: true, force: true });
       } catch (cloudinaryError) {
-        console.error("Cloudinary Error:", cloudinaryError);
+        console.error("Cloudinary Error1:", cloudinaryError);
         return res.status(500).json({
           success: false,
-          message: `Cloudinary Error: ${cloudinaryError.message}`,
+          message: `Cloudinary Error2: ${cloudinaryError.message}`,
         });
       }
     }
 
     await user.save();
+    if (fs.existsSync(avatar)) {
+      fs.unlinkSync(avatar);
+    }
 
-    responseSender(res, 200, true, `Profile update Successfully `);
+    responseSender(res, 200, true, `Profile update Successfully `, user);
   } catch (error) {
     responseErrorSender(
       res,

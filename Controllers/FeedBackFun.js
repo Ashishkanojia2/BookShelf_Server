@@ -23,11 +23,16 @@ export const sendFeedback = async (req, res) => {
     });
     console.log("1212", feedback_data);
     let userdata = await usermodule.findOne({ _id: userid });
+    console.log("userdata", userdata);
+
     userdata.feedBack.push(feedback_data._id);
     userdata.save();
-    responseSender(res, 200, "true", feedback_data);
+    res
+      .json({ success: true, message: "FeedBack Send Successfully" })
+      .status(200);
+    // responseSender(res, 200, true, "FeedBack Send Successfully.");
   } catch (error) {
-    console.log("error occurred from feeback fun ", error);
+    console.log("error occurred from feedback fun ", error);
     responseErrorSender(res, 401, "false", error);
   }
 };
