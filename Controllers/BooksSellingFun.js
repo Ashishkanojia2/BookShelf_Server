@@ -76,13 +76,11 @@ export const register = async (req, res) => {
     user.sellingbooks.push(bookdata._id);
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Book registered successfully",
-        bookdata,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Book registered successfully",
+      bookdata,
+    });
   } catch (error) {
     console.log("Error while registering book:", error);
     res.status(500).json({
@@ -91,12 +89,45 @@ export const register = async (req, res) => {
     });
   }
 };
+// export const register_coverImage = async (req, res) => {
+//   console.log("req.file", req.file);
+//   // console.log("req.body", req.body);
+//   try {
+//     const images = req.file;
 
-//
-//
-//
-//
-//
+//     if (!images || images.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No images provided.",
+//       });
+//     }
+
+//     const tempFilePath = images.path;
+//     const uploadResult = await uploadOnCloudinary(tempFilePath);
+//     const iamgeData = {
+//       public_id: uploadResult.public_id,
+//       url: uploadResult.secure_url,
+//     };
+
+//     fs.unlinkSync(tempFilePath);
+
+//     const bookdata = await BookModel.create({
+//       b_coverPageImage: iamgeData,
+//     });
+//     res.status(200).json({
+//       success: true,
+//       message: "Book Cover Image uploaded successfully",
+//       bookdata,
+//     });
+//   } catch (error) {
+//     console.log("Error while Uploading cover Image:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error Uploading cover Image",
+//     });
+//   }
+// };
+
 export const getallData = async (req, res) => {
   try {
     const allbooks = await BookModel.find();
@@ -170,3 +201,6 @@ export const user_DeleteBook = async (req, res) => {
     );
   }
 };
+
+// drop one plan In this plan i just crate a route for upload bookcover image  and the main reason is every this is mashup in register route
+//so in drop my plan
