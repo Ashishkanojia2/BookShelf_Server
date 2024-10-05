@@ -124,6 +124,45 @@ export const login = async (req, res) => {
     });
   }
 };
+export const bookOwner = async (req, res) => {
+  try {
+    const { bookOwnerId } = req.body;
+    console.log("bookOwnerId", bookOwnerId);
+    console.log("req.body", req.body);
+
+    if (!bookOwnerId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Book Owner Not Found1" });
+    }
+
+    const userdata = await usermodule.findOne({ _id: bookOwnerId });
+
+    if (!userdata) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not Exists" });
+    }
+
+    // const isMatch = await userdata.comparePassword(password);
+
+    // console.log(isMatch);
+    // if (!isMatch) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Invalid credentials --> Password doesn't match",
+    //   });
+    // }
+
+    // sendToken(res, 200, userdata, "Login Successful");
+    responseSender(res, 200, true, "userFound", userdata);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: ` login route Catch Case --> ${error.message}`,
+    });
+  }
+};
 export const logout = async (req, res) => {
   try {
     res
