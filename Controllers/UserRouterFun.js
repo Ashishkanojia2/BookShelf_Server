@@ -52,10 +52,7 @@ export const register = async (req, res) => {
 export const verify = async (req, res) => {
   try {
     const user = await usermodule.findById(req.user._id);
-    console.log("user id mili kuch2", user);
-
     const otp = Number(req.body.otp);
-    console.log("userotp code", otp);
 
     if (!user) {
       return res
@@ -108,7 +105,6 @@ export const login = async (req, res) => {
 
     const isMatch = await userdata.comparePassword(password);
 
-    console.log(isMatch);
     if (!isMatch) {
       return res.status(400).json({
         success: false,
@@ -127,9 +123,6 @@ export const login = async (req, res) => {
 export const bookOwner = async (req, res) => {
   try {
     const { bookOwnerId } = req.body;
-    console.log("bookOwnerId", bookOwnerId);
-    console.log("req.body", req.body);
-
     if (!bookOwnerId) {
       return res
         .status(400)
@@ -144,17 +137,6 @@ export const bookOwner = async (req, res) => {
         .json({ success: false, message: "User not Exists" });
     }
 
-    // const isMatch = await userdata.comparePassword(password);
-
-    // console.log(isMatch);
-    // if (!isMatch) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Invalid credentials --> Password doesn't match",
-    //   });
-    // }
-
-    // sendToken(res, 200, userdata, "Login Successful");
     responseSender(res, 200, true, "userFound", userdata);
   } catch (error) {
     res.status(500).json({
@@ -180,7 +162,6 @@ export const logout = async (req, res) => {
 export const getMyProfile = async (req, res) => {
   try {
     const user = await usermodule.findById(req.user._id);
-    // console.log("getmyprofile", user);
     sendToken(res, 200, user, `Welcome back ${user.name}`);
   } catch (error) {
     responseErrorSender(res, 401, false, `user not found ${error.message}`);
@@ -197,7 +178,7 @@ export const forgotPassword = async (req, res) => {
         res,
         401,
         false,
-        "12user not found while update password"
+        "user not found while update password"
       );
     }
     const otpcode = otpGenerator();
@@ -229,7 +210,6 @@ export const resetPassword = async (req, res) => {
       })
       .select("+password");
 
-    console.log("userdata is data is form rest password", userdata);
     if (!userdata) {
       return responseErrorSender(
         res,

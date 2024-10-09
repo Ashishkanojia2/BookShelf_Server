@@ -33,6 +33,5 @@ router.route("/updatePassword").put(isAuthenticated, updatePassword);
 router
   .route("/updateProfile")
   .put(isAuthenticated, upload.single("avatar"), updateProfile);
-// router.route("/register").post(isAuthenticated, upload.array("images"), register);  // this route is book register route
 
 export default router;
