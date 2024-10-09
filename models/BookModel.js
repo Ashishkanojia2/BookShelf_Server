@@ -39,10 +39,6 @@ const bookSchema = mongoose.Schema({
       url: { type: String, required: true },
     },
   ],
-  // b_coverPageImage: {
-  //   public_id: { type: String, required: true },
-  //   url: { type: String, required: true },
-  // },
 });
 
 export const BookModel = mongoose.model("books", bookSchema);
