@@ -42,6 +42,16 @@ export const register = async (req, res) => {
       b_edition,
     } = req.body;
 
+    console.log(
+      b_name,
+      b_MRP,
+      b_desc,
+      b_sellingprice,
+      b_author,
+      b_categorie,
+      b_edition
+    );
+
     for (const image of images) {
       const tempFilePath = image.path;
       const uploadResult = await uploadOnCloudinary(tempFilePath);
