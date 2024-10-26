@@ -12,6 +12,8 @@ export const book_Home = (req, res) => {
 };
 
 export const register = async (req, res) => {
+  console.log("****************************************************");
+  console.log("user mein kya mila", req.body);
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
@@ -89,6 +91,13 @@ export const register = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error while registering book",
+    });
+  } finally {
+    // Remove files in case of any unhandled errors
+    images.forEach((image) => {
+      if (image.path) {
+        fs.unlinkSync(image.path);
+      }
     });
   }
 };
