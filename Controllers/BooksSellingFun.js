@@ -163,9 +163,10 @@ export const register = async (req, res) => {
 
       const uploadResult = await uploadOnCloudinary(tempFilePath);
 
+
       productImages.push({
-        public_id: uploadResult.public_id,
-        url: uploadResult.secure_url,
+        public_id: uploadResult?.public_id,
+        url: uploadResult?.secure_url,
       });
 
       // Remove the temporary file after successful upload
