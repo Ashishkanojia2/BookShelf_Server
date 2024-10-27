@@ -1,3 +1,4 @@
+// import fs from "fs";
 import { BookModel } from "../models/BookModel.js";
 import { usermodule } from "../models/userModel.js";
 import {
@@ -11,9 +12,100 @@ export const book_Home = (req, res) => {
   res.send("chl rha hai bhai book router");
 };
 
+// export const register = async (req, res) => {
+//   console.log("****************************************************");
+//   console.log("user mein kya mila", req.body);
+//   try {
+//     const productImages = [];
+//     const user = await usermodule.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "User does not exist while registering books",
+//       });
+//     }
+
+//     const images = req.files;
+
+//     if (!images || images.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No images provided.",
+//       });
+//     }
+
+//     const {
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//     } = req.body;
+
+//     console.log(
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition
+//     );
+
+//     for (const image of images) {
+//       const tempFilePath = image.path;
+//       const uploadResult = await uploadOnCloudinary(tempFilePath);
+
+//       productImages.push({
+//         public_id: uploadResult.public_id,
+//         url: uploadResult.secure_url,
+//       });
+
+//       fs.unlinkSync(tempFilePath);
+//     }
+
+//     const bookdata = await BookModel.create({
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//       b_seller_id: user._id,
+//       images: productImages,
+//     });
+
+//     user.sellingbooks.push(bookdata._id);
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Book registered successfully",
+//       bookdata,
+//     });
+//   } catch (error) {
+//     console.log("Error while registering book:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error while registering book",
+//     });
+//   } finally {
+//     // Remove files in case of any unhandled errors
+//     images.forEach((image) => {
+//       if (image.path) {
+//         fs.unlinkSync(image.path);
+//       }
+//     });
+//   }
+// };
+
 export const register = async (req, res) => {
   console.log("****************************************************");
-  console.log("user mein kya mila", req.body);
+  console.log("User data:", req.body);
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
@@ -55,7 +147,20 @@ export const register = async (req, res) => {
     );
 
     for (const image of images) {
+      console.log("image me kuch mill rha hai ya nhi", images);
+
       const tempFilePath = image.path;
+      console.log("Temporary file path:", tempFilePath);
+
+      // Check if the file exists before trying to upload
+      if (!fs.existsSync(tempFilePath)) {
+        console.error(`File does not exist: ${tempFilePath}`);
+        return res.status(400).json({
+          success: false,
+          message: "Uploaded file not found.",
+        });
+      }
+
       const uploadResult = await uploadOnCloudinary(tempFilePath);
 
       productImages.push({
@@ -63,6 +168,7 @@ export const register = async (req, res) => {
         url: uploadResult.secure_url,
       });
 
+      // Remove the temporary file after successful upload
       fs.unlinkSync(tempFilePath);
     }
 
@@ -92,14 +198,22 @@ export const register = async (req, res) => {
       success: false,
       message: "Server error while registering book",
     });
-  } finally {
-    // Remove files in case of any unhandled errors
-    images.forEach((image) => {
-      if (image.path) {
-        fs.unlinkSync(image.path);
-      }
-    });
   }
+
+  // finally {
+  //   // Clean up any remaining files
+  //   if (images) {
+  //     images.forEach((image) => {
+  //       if (image.path) {
+  //         try {
+  //           fs.unlinkSync(image.path);
+  //         } catch (cleanupError) {
+  //           console.error("Error cleaning up file:", cleanupError);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 };
 
 export const getallData = async (req, res) => {

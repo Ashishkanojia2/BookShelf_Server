@@ -11,7 +11,7 @@ const uploadOnCloudinary = async (localFilePath) => {
       folder: "Product_Images_ashishDev",
     });
     console.log(
-      "From Cloudinary Module located in utls : file uploder Successfully in Cloudinary !!!"
+      "From Cloudinary Module located in utils : file uploder Successfully in Cloudinary !!!"
     );
 
     return response;
