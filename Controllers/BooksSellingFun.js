@@ -103,9 +103,219 @@ export const book_Home = (req, res) => {
 //   }
 // };
 
+// export const register = async (req, res) => {
+//   console.log("****************************************************");
+//   console.log("User data:", req.body);
+//   try {
+//     const productImages = [];
+//     const user = await usermodule.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "User does not exist while registering books",
+//       });
+//     }
+
+//     const images = req.files;
+
+//     if (!images || images.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No images provided.",
+//       });
+//     }
+
+//     const {
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//     } = req.body;
+
+//     console.log(
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition
+//     );
+
+//     for (const image of images) {
+//       console.log("image me kuch mill rha hai ya nhi", images);
+
+//       const tempFilePath = image.path;
+//       console.log("Temporary file path:", tempFilePath);
+
+//       // Check if the file exists before trying to upload
+//       if (!fs.existsSync(tempFilePath)) {
+//         console.error(`File does not exist: ${tempFilePath}`);
+//         return res.status(400).json({
+//           success: false,
+//           message: "Uploaded file not found.",
+//         });
+//       }
+
+//       const uploadResult = await uploadOnCloudinary(tempFilePath);
+
+//       productImages.push({
+//         public_id: uploadResult?.public_id,
+//         url: uploadResult?.secure_url,
+//       });
+
+//       // Remove the temporary file after successful upload
+//       fs.unlinkSync(tempFilePath);
+//     }
+
+//     const bookdata = await BookModel.create({
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//       b_seller_id: user._id,
+//       images: productImages,
+//     });
+
+//     user.sellingbooks.push(bookdata._id);
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Book registered successfully",
+//       bookdata,
+//     });
+//   } catch (error) {
+//     console.log("Error while registering book:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error while registering book",
+//     });
+//   }
+
+//   // finally {
+//   //   // Clean up any remaining files
+//   //   if (images) {
+//   //     images.forEach((image) => {
+//   //       if (image.path) {
+//   //         try {
+//   //           fs.unlinkSync(image.path);
+//   //         } catch (cleanupError) {
+//   //           console.error("Error cleaning up file:", cleanupError);
+//   //         }
+//   //       }
+//   //     });
+//   //   }
+//   // }
+// };
+
+// import { v2 as cloudinary } from "cloudinary";
+import stream from "stream";
+
+// export const register = async (req, res) => {
+//   console.log("****************************************************");
+//   console.log("User data:", req.body);
+
+//   try {
+//     const productImages = [];
+//     const user = await usermodule.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "User does not exist while registering books",
+//       });
+//     }
+
+//     const images = req.files;
+
+//     if (!images || images.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No images provided.",
+//       });
+//     }
+
+//     const {
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//     } = req.body;
+
+//     for (const image of images) {
+//       const bufferStream = new stream.PassThrough();
+//       bufferStream.end(image.buffer);
+
+//       const uploadResult = await new Promise((resolve, reject) => {
+//         bufferStream
+//           .pipe(
+//             cloudinary.uploader.upload_stream(
+//               { resource_type: "image" },
+//               (error, result) => {
+//                 if (error) {
+//                   return reject(error);
+//                 }
+//                 resolve(result);
+//               }
+//             )
+//           )
+//           .on("error", reject);
+//       });
+
+//       productImages.push({
+//         public_id: uploadResult?.public_id,
+//         url: uploadResult?.secure_url,
+//       });
+//     }
+
+//     const bookdata = await BookModel.create({
+//       b_name,
+//       b_MRP,
+//       b_desc,
+//       b_sellingprice,
+//       b_author,
+//       b_categorie,
+//       b_edition,
+//       b_seller_id: user._id,
+//       images: productImages,
+//     });
+
+//     user.sellingbooks.push(bookdata._id);
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Book registered successfully",
+//       bookdata,
+//     });
+//   } catch (error) {
+//     console.log("Error while registering book:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error while registering book",
+//     });
+//   }
+// };
+
+
+
+import { v2 as cloudinary } from 'cloudinary'; // Ensure you import cloudinary correctly
+
 export const register = async (req, res) => {
   console.log("****************************************************");
   console.log("User data:", req.body);
+  
   try {
     const productImages = [];
     const user = await usermodule.findById(req.user._id);
@@ -117,7 +327,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const images = req.files;
+    const images = req.files; // These will be in memory now
 
     if (!images || images.length === 0) {
       return res.status(400).json({
@@ -146,32 +356,60 @@ export const register = async (req, res) => {
       b_edition
     );
 
+    // for (const image of images) {
+    //   console.log("Received image:", image);
+
+    //   // Upload the image directly from memory
+    //   const uploadResult = await cloudinary.uploader.upload_stream({ 
+    //     resource_type: 'image',
+    //   }, (error, result) => {
+    //     if (error) {
+    //       console.error("Error uploading to Cloudinary:", error);
+    //       throw new Error("Failed to upload image");
+    //     }
+    //     return result;
+    //   });
+
+    //   const bufferStream = new stream.PassThrough();
+    //   bufferStream.end(image.buffer); // Send the buffer to Cloudinary
+
+    //   const uploadResponse = await new Promise((resolve, reject) => {
+    //     bufferStream.pipe(uploadResult)
+    //       .on('finish', () => resolve(uploadResult))
+    //       .on('error', reject);
+    //   });
+
+    //   productImages.push({
+    //     public_id: uploadResponse?.public_id,
+    //     url: uploadResponse?.secure_url,
+    //   });
+    // }
+
     for (const image of images) {
-      console.log("image me kuch mill rha hai ya nhi", images);
-
-      const tempFilePath = image.path;
-      console.log("Temporary file path:", tempFilePath);
-
-      // Check if the file exists before trying to upload
-      if (!fs.existsSync(tempFilePath)) {
-        console.error(`File does not exist: ${tempFilePath}`);
-        return res.status(400).json({
-          success: false,
-          message: "Uploaded file not found.",
-        });
-      }
-
-      const uploadResult = await uploadOnCloudinary(tempFilePath);
-
-
-      productImages.push({
-        public_id: uploadResult?.public_id,
-        url: uploadResult?.secure_url,
+      const bufferStream = new stream.PassThrough();
+      bufferStream.end(image.buffer);
+    
+      const uploadResult = await new Promise((resolve, reject) => {
+        bufferStream.pipe(cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        })).on('error', reject);
       });
-
-      // Remove the temporary file after successful upload
-      fs.unlinkSync(tempFilePath);
+    
+      console.log("Upload result:", uploadResult); // Log the result to check for the URL
+    
+      if (uploadResult?.secure_url) {
+        productImages.push({
+          public_id: uploadResult.public_id,
+          url: uploadResult.secure_url,
+        });
+      } else {
+        console.error("Upload failed, no URL returned:", uploadResult);
+      }
     }
+    
 
     const bookdata = await BookModel.create({
       b_name,
@@ -200,22 +438,8 @@ export const register = async (req, res) => {
       message: "Server error while registering book",
     });
   }
-
-  // finally {
-  //   // Clean up any remaining files
-  //   if (images) {
-  //     images.forEach((image) => {
-  //       if (image.path) {
-  //         try {
-  //           fs.unlinkSync(image.path);
-  //         } catch (cleanupError) {
-  //           console.error("Error cleaning up file:", cleanupError);
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
 };
+
 
 export const getallData = async (req, res) => {
   try {
