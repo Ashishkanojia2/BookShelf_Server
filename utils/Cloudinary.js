@@ -9,6 +9,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     const response = await cloudinary.v2.uploader.upload(localFilePath, {
       resource_type: "auto",
       folder: "Product_Images_ashishDev",
+      
     });
     console.log(
       "From Cloudinary Module located in utils : file uploder Successfully in Cloudinary !!!"
