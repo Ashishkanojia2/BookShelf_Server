@@ -1,7 +1,8 @@
 import express from "express";
 import {
   bookOwner,
-  forgotPassword, getMyProfile,
+  forgotPassword,
+  getMyProfile,
   home_route,
   login,
   logout,
@@ -9,10 +10,12 @@ import {
   resetPassword,
   updatePassword,
   updateProfile,
-  verify
+  verify,
 } from "../Controllers/UserRouterFun.js";
 import { isAuthenticated } from "../Middleware/auth.js";
+// import { singleUpload } from "../Middleware/multerMiddleware.js";
 import upload from "../Middleware/multerMiddleware.js";
+// singleUpload
 const router = express();
 
 router.get("/", (req, res) => {
@@ -33,5 +36,6 @@ router.route("/updatePassword").put(isAuthenticated, updatePassword);
 router
   .route("/updateProfile")
   .put(isAuthenticated, upload.single("avatar"), updateProfile);
+  // .put(isAuthenticated, singleUpload, updateProfile);
 
 export default router;

@@ -274,6 +274,15 @@ export const updateProfile = async (req, res) => {
   try {
     const { name, gender, occupation, phone, address } = req.body;
     const avatar = req.file?.path;
+    console.log(
+      "******************** update profile from server side  *********************"
+    );
+
+    console.log(
+      `name : ${name} , gender : ${gender} , occupation : ${occupation} , phone : ${phone} , address : ${address} `
+    );
+    console.log(`avatar : ${avatar}`);
+    console.log(`req.file : ${req.file}`);
 
     const user = await usermodule.findById(req.user._id);
     if (!user) {
